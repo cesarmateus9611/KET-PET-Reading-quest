@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reading Quest: Mobile & TV Edition | Session 4</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --panel: #1e293b;
+      --card: #334155;
+      --accent: #38bdf8;
+      --gold: #facc15;
+      --green: #22c55e;
+      --red: #ef4444;
+      --purple: #c084fc;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --font-scale: 1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 12px;
+      font-size: calc(16px * var(--font-scale));
+      line-height: 1.55;
+    }
+    .container { max-width: 1000px; margin: 0 auto; }
+    header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 2px solid #475569;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    h1 { margin: 0; color: var(--gold); font-size: 1.6rem; }
+    .sub { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+    .top-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .ctrl-btn {
+      background: #0f172a;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 8px 14px;
+      border-radius: 99px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .ctrl-btn:hover { background: var(--accent); color: #0f172a; }
+
+    /* Navigation Tabs */
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .tab-btn {
+      background: var(--panel);
+      color: var(--text);
+      border: 2px solid #475569;
+      padding: 12px 10px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #090d16;
+      border-color: var(--accent);
+    }
+
+    .game-section { display: none; }
+    .game-section.active { display: block; }
+
+    .panel-box {
+      background: var(--panel);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .reading-passage {
+      background: #0f172a;
+      border-left: 5px solid var(--accent);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 18px;
+    }
+    .highlight-ev {
+      background: rgba(250, 204, 21, 0.25);
+      border-bottom: 2px solid var(--gold);
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .q-card {
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .q-title { font-weight: 700; color: var(--gold); margin-bottom: 10px; }
+    .opt-list { display: grid; gap: 8px; }
+    .opt {
+      background: var(--card);
+      color: var(--text);
+      border: 2px solid #64748b;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: left;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.98rem;
+      transition: 0.15s;
+    }
+    .opt:hover { border-color: var(--accent); }
+    .opt.correct { background: rgba(34, 197, 94, 0.25); border-color: var(--green); color: #86efac; }
+    .opt.wrong { background: rgba(239, 68, 68, 0.25); border-color: var(--red); color: #fca5a5; }
+
+    .timer-bar {
+      height: 12px;
+      background: #334155;
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    .timer-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--gold), var(--red));
+      width: 100%;
+      transition: width 0.3s linear;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--purple);
+      color: #090d16;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      margin-right: 6px;
+    }
+    select.gap-select {
+      background: #1e293b;
+      color: var(--gold);
+      border: 2px solid var(--accent);
+      padding: 8px;
+      border-radius: 8px;
+      font-weight: bold;
+      max-width: 100%;
+      margin: 6px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>🚀 READING QUEST: MOBILE & TV ARENA</h1>
+    <div class="sub">Session 4: Skimming, Scanning & Author's Attitude | KET & PET (2022 Format)</div>
+    <div class="top-controls">
+      <button class="ctrl-btn" onclick="toggleProjectorMode()">📺 TV Projector Zoom</button>
+      <button class="ctrl-btn" onclick="speakCurrentText()">🔊 Read Text Aloud</button>
+      <button class="ctrl-btn" onclick="stopSpeech()">⏹️ Stop Audio</button>
+      <span class="ctrl-btn" style="border-color:var(--gold); color:var(--gold);">⭐ Score: <span id="global-score">0</span> pts</span>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openGame(1)">⚡ 1. Speed Radar (30s)</button>
+    <button class="tab-btn" onclick="openGame(2)">🩰 2. KET Part 3 (Dancers)</button>
+    <button class="tab-btn" onclick="openGame(3)">🚵‍♂️ 3. PET Part 3 (Biking)</button>
+    <button class="tab-btn" onclick="openGame(4)">🧩 4. PET Part 2 & 4 (Puzzles)</button>
+  </div>
+
+  <!-- GAME 1: SPEED SCANNER -->
+  <div id="game1" class="game-section active">
+    <div class="panel-box">
+      <h2>⚡ Game 1: 30-Second Synonym & Scanning Radar</h2>
+      <p>Scan the short notice/excerpt and tap the option that means the <strong>EXACT SAME THING</strong> before the timer runs out!</p>
+      <div class="timer-bar"><div id="radar-fill" class="timer-fill"></div></div>
+      <div id="radar-box" class="q-card"></div>
+      <button class="ctrl-btn" onclick="startRadarRound()">▶️ Start / Next Radar Challenge</button>
+    </div>
+  </div>
+
+  <!-- GAME 2: KET PART 3 -->
+  <div id="game2" class="game-section">
+    <div class="panel-box">
+      <h2>🩰 Game 2: KET Reading Part 3 — "A Family of Dancers"</h2>
+      <button class="ctrl-btn" onclick="toggleEvidence('ket')">🔦 Toggle Evidence Highlighter</button>
+      <div id="ket-passage" class="reading-passage" style="margin-top:12px;">
+        <p><strong>Paragraph 1:</strong> The women in the Watson family are all crazy about ballet. <span class="ev-ket">These days, Alice Watson gives ballet lessons</span>, but for many years, she was a dancer with the National Ballet Company. Her mother, Hannah, also had a full-time job there, making costumes for the dancers.</p>
+        <p><strong>Paragraph 2:</strong> <span class="ev-ket">Alice's daughter Demi started learning ballet as soon as she could walk.</span> 'I never taught her,' says Alice, 'because she never let me.' Now aged sixteen, Demi is a member of the ballet company where her mother was the star dancer for many years.</p>
+        <p><strong>Paragraph 3:</strong> Alice's husband, Jack, is an electrician. They met while he was working at a theatre where she was dancing and got married soon after. 'When Demi started dancing, the house was too small for her and Alice to practise in <span class="ev-ket">so I made the garage into a dance studio.</span> Now the living room is nice and quiet when I'm watching television!' he says.</p>
+        <p><strong>Paragraph 4:</strong> Last month, Demi was invited to dance in the ballet <em>Swan Lake</em>. <span class="ev-ket">Of course, Alice and Hannah were in the audience and even Jack was there, which made it very special for Demi.</span> Demi was wearing a dress that Hannah made for Alice many years before. 'It was very exciting for all of us,' says Hannah. <span class="ev-ket">'I know I'm her grandmother, but I think she has a great future!'</span></p>
+      </div>
+      <div id="ket-questions"></div>
+    </div>
+  </div>
+
+  <!-- GAME 3: PET PART 3 -->
+  <div id="game3" class="game-section">
+    <div class="panel-box">
+      <h2>🚵‍♂️ Game 3: PET Reading Part 3 — "Artist Peter Fuller & Mountain Biking"</h2>
+      <div id="pet-passage" class="reading-passage">
+        <p><strong>Paragraph 1:</strong> There's a popular idea that artists are not supposed to be into sport, but mountain biking is a huge part of my life. It gets me out of my studio, and into the countryside. But more importantly, racing along as fast as you can leaves you no time to worry about anything that's going on in your life. You're too busy concentrating on not crashing.</p>
+        <p><strong>Paragraph 2:</strong> I'm in my sixties now, but I started cycling when I was a kid. In the summer my friends and I would ride our bikes into the woods and see who was brave enough to go down steep hills, or do big jumps. The bikes we had then weren't built for that, and often broke, so I used to draw pictures of bikes with big thick tyres.</p>
+        <p><strong>Paragraph 3:</strong> At that time I was into skateboarding. I did that for a decade until falling off on to hard surfaces started to hurt too much. Mountain biking seemed a fairly safe way to keep fit, so I took that up instead. I made a lot of friends, and got involved in racing.</p>
+        <p><strong>Paragraph 4:</strong> In the end I stopped racing, mainly because I knew what it could mean to my career if I had a bad crash. But I still like to do a three-hour mountain bike ride every week. And if I'm out cycling in the hills and see a rider ahead, I have to beat them to the top. As I go past I imagine how surprised they would be if they knew how old I am.</p>
+      </div>
+      <div id="pet-questions"></div>
+    </div>
+  </div>
+
+  <!-- GAME 4: PET PART 2 & PART 4 PUZZLES -->
+  <div id="game4" class="game-section">
+    <div class="panel-box">
+      <h2>🧩 Game 4: Cohesion Bridge (PET Part 4) & Market Matcher (PET Part 2)</h2>
+      <p><strong>Part A — Gapped Text ("A New Life"):</strong> Choose the missing sentence that builds a bridge between the ideas before and after the gap!</p>
+      <div class="reading-passage">
+        I used to work as a college lecturer in the north of England, running photography courses. It wasn't a bad job and I really liked my students, but I began to feel tired of doing the same thing every day. <br>
+        <select id="gap16" class="gap-select" onchange="checkGap(this, 'G')">
+          <option value="">-- Gap (16): Choose the missing bridge sentence --</option>
+          <option value="A">A) That's why I knew it was a terrible plan.</option>
+          <option value="E">E) I began joking to friends about sending in an application.</option>
+          <option value="G">G) I decided I needed a break.</option>
+        </select><br><br>
+        I'd always loved travelling, so one weekend I typed 'international volunteering' into an internet search engine. At the top of the results page was the opportunity to go and stay on an island in the Indian Ocean and help protect the beaches. <br>
+        <select id="gap17" class="gap-select" onchange="checkGap(this, 'E')">
+          <option value="">-- Gap (17): Choose the missing bridge sentence --</option>
+          <option value="E">E) I began joking to friends about sending in an application.</option>
+          <option value="C">C) They always ask lots of questions.</option>
+          <option value="D">D) I work far harder than I used to.</option>
+        </select><br>
+        I had some diving experience, and the more I talked about it, the more I wanted to do it! So I contacted the organisation and they offered to send me to the island.<br><br>
+        As soon as I got to the island, I was sure I'd done the right thing. My first dive was incredible. <br>
+        <select id="gap19" class="gap-select" onchange="checkGap(this, 'B')">
+          <option value="">-- Gap (19): Choose the missing bridge sentence --</option>
+          <option value="F">F) Afterwards, some people were surprised by my decision.</option>
+          <option value="B">B) I had trained in icy water in the UK so the crystal clear warm water felt amazing.</option>
+          <option value="H">H) I needed to explain that first.</option>
+        </select><br>
+        I felt so lucky to be able to experience that every day!
+      </div>
+      <div id="gap-feedback" style="font-weight:bold; color:var(--gold);"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let globalScore = 0;
+  let zoomMode = false;
+
+  function addScore(pts) {
+    globalScore += pts;
+    document.getElementById("global-score").innerText = globalScore;
+    playBeep(660, 0.12);
+  }
+
+  function playBeep(freq, dur) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+      osc.stop(ctx.currentTime + dur);
+    } catch(e) {}
+  }
+
+  function toggleProjectorMode() {
+    zoomMode = !zoomMode;
+    document.documentElement.style.setProperty('--font-scale', zoomMode ? '1.25' : '1');
+  }
+
+  function speakCurrentText() {
+    stopSpeech();
+    const activeSec = document.querySelector('.game-section.active').innerText;
+    const utter = new SpeechSynthesisUtterance(activeSec.slice(0, 900));
+    utter.lang = 'en-GB';
+    utter.rate = 0.95;
+    window.speechSynthesis.speak(utter);
+  }
+
+  function stopSpeech() {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+  }
+
+  function openGame(n) {
+    stopSpeech();
+    document.querySelectorAll('.game-section').forEach((s, i) => s.classList.toggle('active', i + 1 === n));
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === n));
+  }
+
+  /* GAME 1: RADAR DATA */
+  const radarData = [
+    {
+      text: "🔍 [City Markets - PET Part 2] 'Jenny wants to buy locally-produced food traditional to the area, needs somewhere to eat, and wants to be close to sightseeing attractions.'",
+      q: "Which market matches ALL 3 of Jenny's requirements?",
+      opts: [
+        { t: "Beckfield Market: Famous for second-hand cameras and hot soup.", ok: false },
+        { t: "Purford Market: Close to museums, sells the region's famous cheese, with seats to eat.", ok: true },
+        { t: "Camberwall Market: Indoor market with gold jewellery and a nearby restaurant.", ok: false }
+      ]
+    },
+    {
+      text: "🔍 [City Markets - PET Part 2] 'Matt wants clothes at reasonable prices, something hot to eat, and rare recordings by different bands.'",
+      q: "Scan and match Matt's market:",
+      opts: [
+        { t: "Teddingley Market: Great-value clothes, unusual albums, and hot world food cooked in front of you.", ok: true },
+        { t: "Oldford Lane: Wide range of jewellery and clothes in the morning.", ok: false },
+        { t: "Cobbledown Road: Musical instruments and home-made cakes.", ok: false }
+      ]
+    },
+    {
+      text: "🔍 [Fontibón Market Sign] 'FARMERS' FAIR: Fresh organic potatoes and fruit from Cundinamarca until 2:00 PM. Bring your own cloth bag to get a 10% discount!'",
+      q: "What does the sign say?",
+      opts: [
+        { t: "You pay less if you carry your shopping in a reusable bag.", ok: true },
+        { t: "The market sells plastic bags for 10% extra after 2:00 PM.", ok: false },
+        { t: "Only farmers from Fontibón are allowed to enter before 2:00 PM.", ok: false }
+      ]
+    }
+  ];
+
+  let rIdx = 0;
+  let rTimer = null;
+
+  function startRadarRound() {
+    clearInterval(rTimer);
+    const item = radarData[rIdx % radarData.length];
+    rIdx++;
+    const box = document.getElementById("radar-box");
+    box.innerHTML = `
+      <div class="q-title">${item.text}</div>
+      <p><strong>${item.q}</strong></p>
+      <div class="opt-list">
+        ${item.opts.map(o => `<button class="opt" onclick="answerRadar(this, ${o.ok})">${o.t}</button>`).join("")}
+      </div>
+    `;
+    let timeLeft = 100;
+    const fill = document.getElementById("radar-fill");
+    fill.style.width = "100%";
+    rTimer = setInterval(() => {
+      timeLeft -= 2;
+      fill.style.width = timeLeft + "%";
+      if (timeLeft <= 0) clearInterval(rTimer);
+    }, 400);
+  }
+
+  function answerRadar(btn, ok) {
+    clearInterval(rTimer);
+    if (ok) {
+      btn.classList.add("correct");
+      btn.innerHTML += " ✅ SPOT ON! (+10 pts)";
+      addScore(10);
+    } else {
+      btn.classList.add("wrong");
+      btn.innerHTML += " ❌ Trap! Check all 3 conditions.";
+      playBeep(220, 0.25);
+    }
+  }
+
+  /* GAME 2: KET PART 3 QUESTIONS */
+  const ketQuestions = [
+    {
+      q: "14. What is Alice Watson's job now?",
+      opts: ["A) dancer", "B) teacher", "C) dress-maker"],
+      ans: 1,
+      exp: "Paragraph 1 says: 'These days, Alice Watson gives ballet lessons' (= teacher)."
+    },
+    {
+      q: "15. Demi had her first ballet lessons...",
+      opts: ["A) at a very young age.", "B) at the National Ballet Company.", "C) from her mother."],
+      ans: 0,
+      exp: "Paragraph 2 says: 'started learning ballet as soon as she could walk' (= very young age)."
+    },
+    {
+      q: "16. Jack helped his wife and daughter by...",
+      opts: ["A) moving to a larger house.", "B) letting them use the living room.", "C) making a place for them to practise in."],
+      ans: 2,
+      exp: "Paragraph 3 says: 'I made the garage into a dance studio.'"
+    },
+    {
+      q: "17. What was the best thing about the Swan Lake show for Demi?",
+      opts: ["A) It was her first show with the company.", "B) All her family were there.", "C) She was wearing a new dress."],
+      ans: 1,
+      exp: "Paragraph 4 says: 'Alice and Hannah were in the audience and even Jack was there, which made it very special.'"
+    },
+    {
+      q: "18. Hannah says that Demi...",
+      opts: ["A) will be a star one day.", "B) is her favourite granddaughter.", "C) dances better than Alice did."],
+      ans: 0,
+      exp: "Paragraph 4 says: 'I think she has a great future!' (= will be a star one day)."
+    }
+  ];
+
+  /* GAME 3: PET PART 3 QUESTIONS */
+  const petQuestions = [
+    {
+      q: "11. Peter enjoys mountain biking because...",
+      opts: [
+        "A) it gives him the opportunity to enjoy the views.",
+        "B) he can use the time to plan his work.",
+        "C) he is able to stop thinking about his problems.",
+        "D) it helps him to concentrate better."
+      ],
+      ans: 2,
+      exp: "Paragraph 1: 'leaves you no time to worry about anything that's going on in your life.'"
+    },
+    {
+      q: "12. What does Peter say about cycling during his childhood?",
+      opts: [
+        "A) He is sorry he didn't take more care of his bike.",
+        "B) His friends always had better quality bikes than he did.",
+        "C) His bike wasn't suitable for the activities he was doing.",
+        "D) He was more interested in designing bikes than riding them."
+      ],
+      ans: 2,
+      exp: "Paragraph 2: 'The bikes we had then weren't built for that, and often broke.'"
+    },
+    {
+      q: "13. Peter says he returned to cycling after several years...",
+      opts: [
+        "A) because he had become unfit.",
+        "B) so that he could enter races.",
+        "C) in order to meet new people.",
+        "D) to replace an activity he had given up."
+      ],
+      ans: 3,
+      exp: "Paragraph 3: He did skateboarding until it hurt too much, so 'I took that up instead.'"
+    },
+    {
+      q: "14. How does Peter feel about cycling now?",
+      opts: [
+        "A) He is proud that he is still so fast.",
+        "B) He is keen to do less now that he is older.",
+        "C) He regrets the fact that he can no longer compete.",
+        "D) He wishes more people were involved in the sport."
+      ],
+      ans: 0,
+      exp: "Paragraph 4: 'I have to beat them to the top... imagine how surprised they would be if they knew how old I am.'"
+    },
+    {
+      q: "15. [GLOBAL SKIMMING] What would be a good introduction to this article?",
+      opts: [
+        "A) For Peter Fuller, nothing matters more than mountain biking, not even his career.",
+        "B) Artist Peter Fuller takes mountain biking pretty seriously. Here he describes how it all began and what he gets out of it.",
+        "C) In this article, Peter Fuller explains how he became an artist only as a result of mountain biking.",
+        "D) After discovering mountain biking late in life, Peter Fuller gave up art for a while."
+      ],
+      ans: 1,
+      exp: "Option B captures both his childhood start ('when I was a kid') and its benefits without exaggerating that he gave up his career."
+    }
+  ];
+
+  function renderMCQ(list, containerId) {
+    const div = document.getElementById(containerId);
+    list.forEach((item, idx) => {
+      div.innerHTML += `
+        <div class="q-card">
+          <div class="q-title">${item.q}</div>
+          <div class="opt-list">
+            ${item.opts.map((o, oIdx) => `
+              <button class="opt" onclick="checkMCQ(this, ${oIdx === item.ans}, '${item.exp.replace(/'/g, "\\'")}')">${o}</button>
+            `).join("")}
+          </div>
+          <div class="exp-box" style="margin-top:8px; font-size:0.9rem; color:var(--accent); display:none;"></div>
+        </div>
+      `;
+    });
+  }
+
+  function checkMCQ(btn, isRight, expText) {
+    const expDiv = btn.parentElement.nextElementSibling;
+    expDiv.style.display = "block";
+    if (isRight) {
+      btn.classList.add("correct");
+      expDiv.innerHTML = `✅ <strong>Correct!</strong> ${expText}`;
+      addScore(10);
+    } else {
+      btn.classList.add("wrong");
+      expDiv.innerHTML = `❌ <strong>Look closer:</strong> ${expText}`;
+      playBeep(220, 0.2);
+    }
+  }
+
+  function toggleEvidence(type) {
+    document.querySelectorAll(`.ev-${type}`).forEach(el => el.classList.toggle('highlight-ev'));
+  }
+
+  function checkGap(sel, ans) {
+    const fb = document.getElementById("gap-feedback");
+    if (sel.value === ans) {
+      sel.style.borderColor = "#22c55e";
+      fb.innerHTML = `✅ Bridge Connected! Sentence (${ans}) links perfectly with the pronouns and ideas around it.`;
+      addScore(10);
+    } else {
+      sel.style.borderColor = "#ef4444";
+      fb.innerHTML = `❌ Check the sentence before and after the gap! What pronoun or cause-effect link is needed?`;
+      playBeep(220, 0.2);
+    }
+  }
+
+  startRadarRound();
+  renderMCQ(ketQuestions, "ket-questions");
+  renderMCQ(petQuestions, "pet-questions");
+</script>
+
+</body>
+</html>
